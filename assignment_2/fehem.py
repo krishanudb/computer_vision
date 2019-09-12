@@ -5,7 +5,7 @@
 # Step 3: Store the best matches using Lowe's ratio test (gievn in SIFT Paper), which will then be considered for homography estimation
 # (Note: The Image pairs with best matches greater than 300 will be considered for panorma construction 
 # 300 is decided based upon my own matching analysis. As per assignment, we need to come up with some scoring mechanism for decinding this threshold
-# Can we use mention the clustering done in previous version of code as a scoring mechanism ?)
+# Can we mention the clustering done in previous version of code as a scoring mechanism ?)
 # Step 4: Compute a homography via RANSAC
 # Step 5: Used the homography to wrap the pair of images using perspective transform.
 
