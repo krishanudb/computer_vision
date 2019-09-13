@@ -47,7 +47,7 @@ for key, value in kpics.items():
     kp[key] = keypoints
     des[key] = descriptors
     print("Finding unique features from Image {}".format(key))
-    kmeans = MiniBatchKMeans(n_clusters=200, random_state=0, batch_size = len(kp[key]) / 100).fit(des[key])
+    kmeans = MiniBatchKMeans(n_clusters=200, random_state=0, batch_size = len(kp[key]) // 100).fit(des[key])
 
     clusters = kmeans.labels_
     distances = np.sqrt(np.sum((des[key] - kmeans.cluster_centers_[clusters]) ** 2, axis = 1))
@@ -63,9 +63,7 @@ kp = nkp
 print("Finding unique features done.")
 
 print("Feature matching among all pairs of Images starting.")
-matches_dict = {}
 for i in kpics.keys():
-    matches_dict[i] = {}
     for j in kpics.keys():
         if i != j:
             key1 = i
