@@ -23,8 +23,8 @@ from sklearn.cluster import MiniBatchKMeans
 print('OpenCV 3.4.0.12 required. Install this, if current version is different')
 print('Current OpenCV version: ',cv2.__version__)
 
-# folder = sys.argv[1]
-folder = '../input/insample'
+folder = sys.argv[1]
+# folder = '../input/insample'
 
 files = os.listdir(folder)
 pics = {}
@@ -95,10 +95,10 @@ for i in kpics.keys():
 #                 img2 = cv2.polylines(img2,[np.int32(crnr_pts_img2)],True,(0,255,0),10, cv2.LINE_AA)
 #                 draw_params = dict(matchColor = (0,255,0),singlePointColor = None,matchesMask = matchesMask, flags = 2)
 #                 result_img = cv2.drawMatches(img1,kp1,img2,kp2,good_matches,None,**draw_params)
-                result_img = cv2.warpPerspective(img1,M,(img2.shape[1] + img1.shape[1], img2.shape[0]))
+                result_img = cv2.warpPerspective(img1,H,(img2.shape[1] + img1.shape[1], img2.shape[0]))
                 result_img[0:img2.shape[0], 0:img2.shape[1]] = img2
-                plt.imshow(result_img),plt.show()
-#                 plt.imsave(folder + "/" +  "temp1_" + i + "_" + j + ".png", result_img)
+                # plt.imshow(result_img),plt.show()
+                plt.imsave(folder + "/" +  "temp1_" + i + "_" + j + ".png", result_img)
                 print("Feature matching for images pairs {} and {} done".format(i, j))
             else:
                 print ('Not enough matches are found between {} and {}'.format(i, j))
