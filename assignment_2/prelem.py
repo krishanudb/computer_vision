@@ -21,6 +21,7 @@ for filee in files:
     image = cv2.imread(folder + "/" + filee)
     image = cv2.resize(image,None,fx=0.10,fy=0.10)
 
+    # image = image[2:-2, 2:-2, :]
     pics[filee.split(".")[0]] = image
     kpics[filee.split(".")[0]] = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 print("All Images Read.")
@@ -85,14 +86,14 @@ percentile_matches = np.percentile(match_distances, 100 / (len(kpics) - 1))
 
 MIN_MATCH_COUNT = average_matches_per_pair / (2 * len(kpics) - 2)
 
-# print(MIN_MATCH_COUNT)
+print(MIN_MATCH_COUNT)
 best_match = {}
 best_match_count = {}
 good_matches_dict = {}
 
 for key in kpics.keys():
     best_match_count[key] = 0
-print("Finding the order of images")
+
 order = {}
 for i in kpics.keys():
     good_matches_dict[i] = {} 
@@ -104,8 +105,8 @@ for i in kpics.keys():
                     good_matches_dict[i][j].append(match)
              
             good_matches = good_matches_dict[i][j]
-            # print("Between {} and {}".format(i, j))
-            # print(len(good_matches))
+            print("Between {} and {}".format(i, j))
+            print(len(good_matches))
             
             if len(good_matches) >= MIN_MATCH_COUNT:
                 img1, img2, kp1, kp2 = kpics[i], kpics[j], kp[i], kp[j]
@@ -115,18 +116,32 @@ for i in kpics.keys():
                 img2_pts = np.float32([kp2[m.trainIdx].pt for m in matches_dict[i][j]]).reshape(-1,1,2)                
                 H1, mask = cv2.findHomography(img1_pts, img2_pts, cv2.RANSAC,8, maxIters=2000)
 
-                if type(H1) != type(None) and H1[0][2] > 0:
+                if type(H1) != type(None) and H1[0][2] > 0 and H1[1][2] > 0:
                     H2, mask = cv2.findHomography(img2_pts, img1_pts, cv2.RANSAC,8, maxIters=2000)
 
                     H2_inverse = np.linalg.inv(H2)
 
                     H = (H1 + H2_inverse) / 2.
                     
+                    
                     if len(good_matches) > best_match_count[j]:
                         best_match[j] = (i, H)
                         best_match_count[j] = len(good_matches)
                         order[j] = i
 
+
+present_key = []
+present_target = []
+new_best_match = {}
+for key, value in best_match.items():
+    target = value[0]
+    print(key, target)
+    if target not in present_target and key not in present_key:
+        new_best_match[key] = value
+        present_key.append(key)
+        present_target.append(target)
+        
+best_match = new_best_match
 
 def blend_images(image1, image2):
     value1 = (image1.sum(axis = -1) != 0).astype(np.int8)
@@ -136,8 +151,8 @@ def blend_images(image1, image2):
     # print(overlap.sum())
     
     if overlap.sum() > 0:
-        xmin = np.nonzero(overlap)[1].min()
-        xmax = np.nonzero(overlap)[1].max()
+        xmin = np.nonzero(overlap)[1].min() - 2
+        xmax = np.nonzero(overlap)[1].max() + 2
 
         x_overlap = np.zeros(overlap.shape)
         for i in range(0, x_overlap.shape[1]):
@@ -272,8 +287,8 @@ while key in best_match.keys():
     key = match
     order_list.append(key)
     
-middle0 = len(order_list) / 2
-middle1 = len(order_list) / 2 - 1
+middle0 = int(len(order_list) / 2)
+middle1 = int(len(order_list) / 2 - 1)
 
 print("Finding the middle Image")
 
