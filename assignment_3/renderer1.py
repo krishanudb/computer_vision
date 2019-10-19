@@ -12,17 +12,21 @@ import cv2
 import numpy as np 
 import matplotlib.pyplot as plt
 import math
+import pygame
+from OpenGL.GL import *
 
-marker_location = sys.argv[2]
-video_location = sys.argv[3]
-object_location = sys.argv[4]
-output_filename = sys.argv[5] 
-feature_detector = sys.argv[6]
+marker_location = sys.argv[1]
+video_location = sys.argv[2]
+object_location = sys.argv[3]
+output_filename = sys.argv[4] 
+feature_detector = sys.argv[5]
 if feature_detector == "surf" or feature_detector == "SURF":
     feature_detector = "surf"
 
 
-
+camera_matrix = np.array([[2.84858472e+03, 0.00000000e+00, 9.11046976e+02],
+       [0.00000000e+00, 2.40952100e+03, 3.59385332e+02],
+       [0.00000000e+00, 0.00000000e+00, 1.00000000e+00]], dtype=np.float32)
 
 def hex_to_rgb(hex_color):
     """
@@ -186,7 +190,13 @@ def render(img, obj, projection, model, color=False):
     return img
 
 
+
+
+obj = OBJ(object_location, swapyz=True)
+
 # Random colors for the different parts of the object
+
+
 colors = {}
 for part in obj.mtl.keys():
     colors[part] = (np.random.randint(255), np.random.randint(255), np.random.randint(255))
@@ -200,12 +210,12 @@ model_image_binary = cv2.cvtColor(model_image, cv2.COLOR_BGR2GRAY)
 
 
 
-    if feature_detector = "surf":
-        surf = cv2.xfeatures2d.SURF_create(400)
-        kp_model, des_model = surf.detectAndCompute(model_image_binary, None)
-    else:
-        sift = cv2.xfeatures2d.SIFT_create()
-        kp_model, des_model = sift.detectAndCompute(model_image_binary, None)
+if feature_detector == "surf":
+    surf = cv2.xfeatures2d.SURF_create(400)
+    kp_model, des_model = surf.detectAndCompute(model_image_binary, None)
+else:
+    sift = cv2.xfeatures2d.SIFT_create()
+    kp_model, des_model = sift.detectAndCompute(model_image_binary, None)
 
 cap = cv2.VideoCapture(video_location)
 fourcc = cv2.VideoWriter_fourcc('X', 'V', 'I', 'D')
@@ -214,7 +224,6 @@ out = cv2.VideoWriter(output_filename,fourcc, 30, (1920, 1080))
 ret = True
 number = 0
 
-obj = OBJ(object_location, swapyz=True)
 
 M_old = None
 while(ret):
@@ -227,7 +236,7 @@ while(ret):
     
     frame_binary = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
 
-    if feature_detector = "surf":
+    if feature_detector == "surf":
         surf = cv2.xfeatures2d.SURF_create(400)
         kp_frame, des_frame = surf.detectAndCompute(frame_binary, None)
     else:
