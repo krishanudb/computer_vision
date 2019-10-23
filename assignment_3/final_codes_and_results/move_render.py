@@ -68,7 +68,7 @@ def compute_homography(desc_frame, kpt_frame, desc_model, kpt_model, M_old):
 		M, mask = cv2.findHomography(src_pts, dst_pts, cv2.RANSAC, 2.0, maxIters=2000)
 		if type(M) != type(None) and type(M_old) != type(None):
 
-			M = M_old * 0.95 + M * 0.05
+			M = M_old * 0.99 + M * 0.01
 			M_old = M
 		elif type(M) == type(None):
 			M = M_old
@@ -300,18 +300,18 @@ while(ret):
 	M2_old = M2
 		
 
-	h, w, _ = model_image1.shape
-	pts = np.float32([[0, 0], [0, h - 1], [w - 1, h - 1], [w - 1, 0]]).reshape(-1, 1, 2)
+	# h, w, _ = model_image1.shape
+	# pts = np.float32([[0, 0], [0, h - 1], [w - 1, h - 1], [w - 1, 0]]).reshape(-1, 1, 2)
 
-	dst = cv2.perspectiveTransform(pts, M1)  
+	# dst = cv2.perspectiveTransform(pts, M1)  
 
-	temp2 = cv2.fillPoly(frame, [np.int32(dst)], [255, 0, 0]) 
+	# temp2 = cv2.fillPoly(frame, [np.int32(dst)], [255, 0, 0]) 
 
-	h, w, _ = model_image2.shape
-	pts = np.float32([[0, 0], [0, h - 1], [w - 1, h - 1], [w - 1, 0]]).reshape(-1, 1, 2)
-	dst = cv2.perspectiveTransform(pts, M2)
+	# h, w, _ = model_image2.shape
+	# pts = np.float32([[0, 0], [0, h - 1], [w - 1, h - 1], [w - 1, 0]]).reshape(-1, 1, 2)
+	# dst = cv2.perspectiveTransform(pts, M2)
 	
-	temp2 = cv2.fillPoly(frame, [np.int32(dst)], [0, 255, 0]) 
+	# temp2 = cv2.fillPoly(frame, [np.int32(dst)], [0, 255, 0]) 
 
 	M1 = projection_matrix(camera_matrix, M1)  
 	M2 = projection_matrix(camera_matrix, M2)  
