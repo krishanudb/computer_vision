@@ -7,8 +7,10 @@
 # INSIDE THE NEW FOLDER, 2 NEW FOLDERS SUBTRACTION AND PIC WILL STORE THE BACKGROUND SUBTRACTED PICS AND THE RGB PICS RESPECTIVELY
 # THE ANNOTATIONS.TXT FILE WILL CONTAIN THE ANNOTATIONS FOR ALL THE PICS IN THAT VIDEO.
 
+# IN CASE OF ANY ERROR VIDEOS, JUST DELETE THE CORRESPONDING FOLDER NUMBER FROM THE ANNOTATIONS FILE.
 
 """CLASSES=== 0: NONE; 1: STOP; 2: NEXT; 3: PREVIOUS"""
+
 
 import numpy as np
 import cv2
@@ -33,6 +35,8 @@ else:
 os.mkdir("results/" + str(folder_name))
 os.mkdir("results/" + str(folder_name) + "/pic")
 os.mkdir("results/" + str(folder_name) + "/subtraction")
+
+print("Folder Name where images will be stored: 'results/" + str(folder_name) + "'")
 
 nn = 0
 
