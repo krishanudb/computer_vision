@@ -67,7 +67,9 @@ class CNN_Model(nn.Module):
 		x = self.output(x)
 		return x
 
-model = CNN_Model(4, 4, 0.3, 0.4)
+
+model = CNN_Model(4, 4, 0.2, 0.5) # CHANGED
+
 
 
 model.load_state_dict(torch.load("hand_gesture_v5", map_location = torch.device('cpu')))
@@ -79,7 +81,9 @@ def capture():
 	num = 0
 	x = cv2.VideoCapture(0)
 	ret = True
-	bgex = cv2.createBackgroundSubtractorMOG2()
+	bgex = cv2.createBackgroundSubtractorMOG2(history = 0)
+
+	prev_probs = np.array([0.4, 0.2, 0.2, 0.2])	# CHANGED
 
 	while(ret):
 		num += 1
@@ -108,12 +112,13 @@ def capture():
 			cv2.destroyAllWindows()
 			break
 		if num >= 30 and int(num) % 3 == 0:
-			txt = run_model(final)
+			prev_probs, txt = run_model(final, prev_probs)# CHANGED
+
 			# print(txt)
 
 		cv2.putText(image, txt, (50, 50), cv2.FONT_HERSHEY_SIMPLEX, 2, (255, 0, 0), 3, cv2.LINE_AA)
 		cv2.imshow("image", image)
-def run_model(x):
+def run_model(x, prev_probs):
 	global model
 
 	x = x.transpose(0, 3, 1, 2)
@@ -121,13 +126,29 @@ def run_model(x):
 	x = x.type(torch.FloatTensor)
 
 	y = model(x)
-	_, predicted = torch.max(y.data, 1)
-	if predicted.item() == 0:
-		return "None"
-	elif predicted.item() == 1:
-		return "Stop"
-	elif predicted.item() == 2:
-		return "Play"
-	elif predicted.item() == 3:
-		return "Back"
+
+	y = y.detach().numpy().reshape(-1)# CHANGED
+
+	# print(y.shape)
+	probs = np.exp(y) / np.exp(y).sum() # CHANGED
+
+
+	current_probs = prev_probs * 0.5 + probs * 0.5# CHANGED
+
+
+	predicted = np.argmax(current_probs)# CHANGED
+
+	# print(predicted)
+	if predicted == 0:
+		return current_probs, "None"# CHANGED
+
+	elif predicted == 1:
+		return current_probs,"Stop"# CHANGED
+
+	elif predicted == 2:
+		return current_probs,"Play"# CHANGED
+
+	elif predicted == 3:
+		return current_probs, "Back"# CHANGED
+
 capture()
