@@ -77,7 +77,7 @@ model.eval()
 
 playlist = os.listdir(".")
 playlist = [x for x in playlist if x.split(".")[-1] == "mp3"]
-print('playlist: ', playlist)
+print('Playlist: ', playlist)
 vlc_instance = vlc.Instance()
 media_player = vlc_instance.media_list_player_new()
 my_playlist = vlc_instance.media_list_new(playlist)
@@ -122,7 +122,7 @@ def capture():
 			# print(txt)
 
 		cv2.putText(image, txt, (50, 50), cv2.FONT_HERSHEY_SIMPLEX, 2, (255, 0, 0), 3, cv2.LINE_AA)
-		cv2.imshow("image", image)
+		cv2.imshow("Camera-based Music Player", image)
 curr_pred=0
 def run_model(x):
 	global model, curr_pred
