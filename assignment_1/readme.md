@@ -1,3 +1,7 @@
+The program demonstrates how simple image processing can be used to track a simple object. 
+
+The problem statement can be found in the Assignment_1_vision.pdf and the approach solution can be found in the Report.pdf file.
+
 ## Requirements:
 -Python 2.7
 
